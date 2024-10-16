@@ -5,7 +5,7 @@ import {CodeSubmissionComponent} from './code-submission/code-submission.compone
 import {TokenService} from './service/token.service';
 import {FormsModule} from '@angular/forms';
 import {SplitAreaComponent, SplitComponent} from 'angular-split';
-import {NgForOf, NgIf} from '@angular/common';
+import {NgClass, NgForOf, NgIf} from '@angular/common';
 import {LeetcodeService} from './service/leetcode.service';
 import {ProblemService} from './service/problem/problem.service';
 import {Logger} from './service/logger/logger.service';
@@ -15,7 +15,7 @@ import {ToastrService} from 'ngx-toastr';
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [RouterOutlet, ProblemComponent, CodeSubmissionComponent, FormsModule, SplitComponent, SplitAreaComponent, NgIf, NgForOf],
+  imports: [RouterOutlet, ProblemComponent, CodeSubmissionComponent, FormsModule, SplitComponent, SplitAreaComponent, NgIf, NgForOf, NgClass],
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss'
 })
@@ -23,13 +23,14 @@ export class AppComponent implements AfterViewInit {
   title = `LCW`;
   showSplit = false;
   showTokenModal = false;
-
+  searchQuery: string = '';
   showFilterModal = false;
   selectedDifficulty: string = '';
-  selectedTags: { [key: string]: boolean } = {};
+  selectedTags: string[] = [];
   availableTags = tags;
 
   problem: any;
+  filteredTags = [...this.availableTags];
 
 
   @ViewChild(ProblemComponent) problemComponent!: ProblemComponent;
@@ -78,19 +79,34 @@ export class AppComponent implements AfterViewInit {
   }
 
   saveTokens() {
-    console.log('Tokens saved:', this.tokenService.session, this.tokenService.csrftoken);
+    Logger.log('Tokens saved:', this.tokenService.session, this.tokenService.csrftoken);
     this.closeTokenModal();
   }
 
-  applyFilters() {
-    Logger.log('Selected Difficulty:', this.selectedDifficulty);
-    Logger.log('Selected Tags:', this.getSelectedTags());
+  filterTags() {
+    const query = this.searchQuery.toLowerCase();
+    this.filteredTags = this.availableTags.filter(tag =>
+      tag.label.toLowerCase().includes(query)
+    );
+  }
 
-    this.closeFilterModal();
+  toggleTag(tag: { value: string; label: string; selected: boolean }) {
+    tag.selected = !tag.selected;
+    const index = this.selectedTags.indexOf(tag.value);
+    if (index > -1) {
+      this.selectedTags.splice(index, 1);
+    } else {
+      this.selectedTags.push(tag.value);
+    }
   }
 
   getSelectedTags(): string[] {
-    return Object.keys(this.selectedTags).filter(tag => this.selectedTags[tag]);
+    return this.selectedTags;
+  }
+
+  applyFilters() {
+    console.log('Selected Tags:', this.getSelectedTags());
+    this.showFilterModal = false;
   }
 
   // Fetch random task
