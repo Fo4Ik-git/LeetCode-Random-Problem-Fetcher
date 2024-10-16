@@ -70,26 +70,22 @@ export class AppComponent implements AfterViewInit {
   }
 
   openTokenModal() {
-    this.showTokenModal = true; // Show the token modal
+    this.showTokenModal = true;
   }
 
   closeTokenModal() {
-    this.showTokenModal = false; // Hide the token modal
+    this.showTokenModal = false;
   }
 
   saveTokens() {
-    // Logic to save tokens if needed
     console.log('Tokens saved:', this.tokenService.session, this.tokenService.csrftoken);
-    this.closeTokenModal(); // Close modal after saving
+    this.closeTokenModal();
   }
 
   applyFilters() {
-    // Handle logic to apply filters here
-
     Logger.log('Selected Difficulty:', this.selectedDifficulty);
     Logger.log('Selected Tags:', this.getSelectedTags());
 
-    // Close modal after applying filters
     this.closeFilterModal();
   }
 
@@ -97,6 +93,7 @@ export class AppComponent implements AfterViewInit {
     return Object.keys(this.selectedTags).filter(tag => this.selectedTags[tag]);
   }
 
+  // Fetch random task
   fetchRandomTask() {
     const session = this.tokenService.session;
     const csrftoken = this.tokenService.csrftoken;
@@ -115,13 +112,13 @@ export class AppComponent implements AfterViewInit {
         this.showSplit = true;
       },
       error: err => {
-        // Уведомление об ошибке
         this.toastr.error(err, 'Error');
         console.error('Error fetching problem:', err);
       }
     });
   }
 
+  // Fetch daily task
   fetchDailyTask() {
     const session = this.tokenService.session;
     const csrftoken = this.tokenService.csrftoken;
@@ -138,13 +135,13 @@ export class AppComponent implements AfterViewInit {
         this.showSplit = true;
       },
       error: err => {
-        // Уведомление об ошибке
         this.toastr.error(err, 'Error');
         console.error('Error fetching problem:', err);
       }
     });
   }
 
+  // Fetch problem description and hints
   fetchProblemDescription(titleSlug: string) {
     const session = this.tokenService.session;
     const csrftoken = this.tokenService.csrftoken;
@@ -162,7 +159,6 @@ export class AppComponent implements AfterViewInit {
         this.problemService.setProblem(this.problem);
       },
       error: err => {
-        // Уведомление об ошибке
         this.toastr.error(err, 'Error');
         console.error('Error fetching problem:', err);
       }
