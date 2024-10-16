@@ -155,8 +155,10 @@ export class AppComponent implements AfterViewInit {
       next: response => {
         this.problem.description = response.data.question.content;
         this.problem.hints = response.data.question.hints;
-        this.problem.similarQuestions = response.data.question.similarQuestions;
+        this.problem.similarQuestions = response.data.question.similarQuestionList;
         this.problemService.setProblem(this.problem);
+        Logger.log('response.data.question:', response.data.question);
+        Logger.log('Problem:', this.problem);
       },
       error: err => {
         this.toastr.error(err, 'Error');
