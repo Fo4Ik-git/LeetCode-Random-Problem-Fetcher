@@ -123,6 +123,12 @@ export class AppComponent implements AfterViewInit {
 
     this.leetcodeService.fetchProblem(difficulty, tags, session, csrftoken).subscribe({
       next: response => {
+
+        if (response.data.randomQuestion == null) {
+          this.toastr.error('No random problem found', 'Error');
+          return;
+        }
+
         this.problem = response.data.randomQuestion;
         this.fetchProblemDescription(this.problem.titleSlug);
         this.showSplit = true;
