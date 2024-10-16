@@ -11,6 +11,7 @@ import {ProblemService} from './service/problem/problem.service';
 import {Logger} from './service/logger/logger.service';
 import {tags} from './tags';
 import {ToastrService} from 'ngx-toastr';
+import {HttpClient} from '@angular/common/http';
 
 @Component({
   selector: 'app-root',
@@ -32,12 +33,20 @@ export class AppComponent implements AfterViewInit {
   problem: any;
   filteredTags = [...this.availableTags];
 
+  initialCode!: string;
+  selectedLanguage!: string;
+  languages: string[] = [];
+  codeSnippets: any = {};
+  showCodeSubmission: boolean = true;
+  codeEditorTheme: string = 'vs-light';
+
 
   @ViewChild(ProblemComponent) problemComponent!: ProblemComponent;
 
   constructor(protected tokenService: TokenService,
               private leetcodeService: LeetcodeService,
               private toastr: ToastrService,
+              private http: HttpClient,
               private problemService: ProblemService) {
 
   }
@@ -109,6 +118,15 @@ export class AppComponent implements AfterViewInit {
     this.showFilterModal = false;
   }
 
+  onLanguageChange(lang: string) {
+    this.selectedLanguage = lang;
+    this.initialCode = this.codeSnippets[lang] || '';
+    this.showCodeSubmission = false;
+    setTimeout(() => {
+      this.showCodeSubmission = true;
+    }, 0);
+  }
+
   // Fetch random task
   fetchRandomTask() {
     const session = this.tokenService.session;
@@ -116,7 +134,7 @@ export class AppComponent implements AfterViewInit {
     const tags = this.getSelectedTags();
     const difficulty = this.selectedDifficulty;
 
-    if(!this.checkToken()){
+    if (!this.checkToken()) {
       this.alertToken();
       return;
     }
@@ -130,6 +148,18 @@ export class AppComponent implements AfterViewInit {
         }
 
         this.problem = response.data.randomQuestion;
+
+        const codeSnippets = this.problem.codeSnippets;
+
+        this.languages = codeSnippets.map((snippet: { lang: string }) => snippet.lang);
+        this.codeSnippets = {};
+        codeSnippets.forEach((snippet: { lang: string; code: string }) => {
+          this.codeSnippets[snippet.lang] = snippet.code;
+        });
+
+        this.selectedLanguage = this.languages[0];
+        this.initialCode = this.codeSnippets[this.selectedLanguage];
+
         this.fetchProblemDescription(this.problem.titleSlug);
         this.showSplit = true;
       },
@@ -145,7 +175,7 @@ export class AppComponent implements AfterViewInit {
     const session = this.tokenService.session;
     const csrftoken = this.tokenService.csrftoken;
 
-    if(!this.checkToken()){
+    if (!this.checkToken()) {
       this.alertToken();
       return;
     }
@@ -153,6 +183,9 @@ export class AppComponent implements AfterViewInit {
     this.leetcodeService.fetchDailyProblem(session, csrftoken).subscribe({
       next: response => {
         this.problem = response.data.activeDailyCodingChallengeQuestion.question;
+
+
+
         this.fetchProblemDescription(this.problem.titleSlug);
         this.showSplit = true;
       },
@@ -168,7 +201,7 @@ export class AppComponent implements AfterViewInit {
     const session = this.tokenService.session;
     const csrftoken = this.tokenService.csrftoken;
 
-    if(!this.checkToken()){
+    if (!this.checkToken()) {
       this.alertToken();
       return;
     }

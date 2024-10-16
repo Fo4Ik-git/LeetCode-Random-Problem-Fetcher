@@ -8,6 +8,13 @@
   }
 }
 
+as-split-area{
+  max-height: calc(100vh - 200px);
+}
+
+#editor-area {
+  overflow: hidden;
+}
 
 main.container-fluid {
   height: 100%;

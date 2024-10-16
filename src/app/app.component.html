@@ -1,27 +1,38 @@
 <main class="container-fluid h-screen w-screen p-5">
-  <h1 class="flex flex-col items-center justify-center">LeetCode Random Problem Fetcher</h1>
+  <div class="head">
+    <h1 class="flex flex-col items-center justify-center">LeetCode Random Problem Fetcher</h1>
 
-  <div class="container-fluid flex flex-col items-center justify-center mt-2">
-    <div class="row mb-4 flex justify-center">
-      <button class="btn mr-2" (click)="fetchRandomTask()">Fetch Random Task</button>
-      <button class="btn " (click)="fetchDailyTask()">Daily Task</button>
-    </div>
-    <div class="row flex justify-center">
-      <button class="btn mr-2" (click)="openTokenModal()">Set Tokens</button>
-      <button class="btn mr-2" (click)="openFilterModal()">Filters</button>
+    <div class="container-fluid flex flex-col items-center justify-center mt-2">
+      <div class="row mb-4 flex justify-center">
+        <button class="btn mr-2" (click)="fetchRandomTask()">Fetch Random Task</button>
+        <button class="btn " (click)="fetchDailyTask()">Daily Task</button>
+      </div>
+      <div class="row flex justify-center">
+        <button class="btn mr-2" (click)="openTokenModal()">Set Tokens</button>
+        <button class="btn mr-2" (click)="openFilterModal()">Filters</button>
+      </div>
     </div>
   </div>
 
-  <!--  <as-split *ngIf="showSplit" class="mt-2" direction="horizontal">-->
-  <!--    <as-split-area size="70">-->
-  <!--      <app-problem></app-problem>-->
-  <!--    </as-split-area>-->
-  <!--    <as-split-area size="30">-->
-  <!--      <app-code-submission></app-code-submission>-->
-  <!--    </as-split-area>-->
-  <!--  </as-split>-->
-
-  <app-problem *ngIf="showSplit"></app-problem>
+  <as-split *ngIf="showSplit" class="mt-2" direction="horizontal">
+    <as-split-area size="70">
+      <app-problem></app-problem>
+    </as-split-area>
+    <as-split-area id="editor-area" size="30">
+      <div>
+        <label for="language-select">Select Language:</label>
+        <select id="language-select" [(ngModel)]="selectedLanguage" (change)="onLanguageChange(selectedLanguage)">
+          <option *ngFor="let lang of languages" [value]="lang">{{ lang }}</option>
+        </select>
+      </div>
+      <app-code-submission
+        *ngIf="showCodeSubmission"
+        [initialCode]="initialCode"
+        [language]="selectedLanguage"
+        [theme]="codeEditorTheme"
+      ></app-code-submission>
+    </as-split-area>
+  </as-split>
 
 
   <!-- Filter Modal -->
@@ -48,7 +59,8 @@
 
       <!-- Search Input for Tags -->
       <div class="mb-4">
-        <input type="text" [(ngModel)]="searchQuery" (input)="filterTags()" placeholder="Search tags..." class="border p-2 rounded w-full">
+        <input type="text" [(ngModel)]="searchQuery" (input)="filterTags()" placeholder="Search tags..."
+               class="border p-2 rounded w-full">
       </div>
 
       <!-- Tags Filter -->
@@ -79,9 +91,11 @@
     <div class="modal-container bg-white rounded shadow-lg p-5 z-10">
       <h2 class="text-xl font-bold mb-4">Set Tokens</h2>
       <label class="block mb-2">Session Token:</label>
-      <input type="text" [(ngModel)]="tokenService.session" class="border border-gray-300 p-2 w-full mb-4" placeholder="Enter Session Token">
+      <input type="text" [(ngModel)]="tokenService.session" class="border border-gray-300 p-2 w-full mb-4"
+             placeholder="Enter Session Token">
       <label class="block mb-2">CSRF Token:</label>
-      <input type="text" [(ngModel)]="tokenService.csrftoken" class="border border-gray-300 p-2 w-full mb-4" placeholder="Enter CSRF Token">
+      <input type="text" [(ngModel)]="tokenService.csrftoken" class="border border-gray-300 p-2 w-full mb-4"
+             placeholder="Enter CSRF Token">
       <div class="flex justify-end">
         <button (click)="closeTokenModal()" class="bg-gray-300 text-gray-800 px-4 py-2 rounded mr-2">Close</button>
         <button (click)="saveTokens()" class="bg-blue-500 text-white px-4 py-2 rounded">Save</button>
