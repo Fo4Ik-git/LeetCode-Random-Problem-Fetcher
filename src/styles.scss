@@ -1,0 +1,90 @@
+/* You can add global styles to this file, and also import other style files */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+  font-family: 'Arial', sans-serif;
+  background-color: hsl(var(--twc-primary));
+  color: #333;
+}
+
+
+
+
+ul {
+  margin: 10px 0 10px 20px; /* Отступы для списка */
+}
+
+li {
+  margin: 5px 0; /* Отступы для элементов списка */
+}
+
+.hint-item::before {
+  content: '• ';
+  color: black; /* You can change the color if needed */
+}
+
+p {
+  margin: 10px 0;
+  line-height: 1.6;
+  color: #555; /* Цвет текста */
+}
+
+pre {
+  background-color: #f1f1f1; /* Цвет фона для кода */
+  border-left: 4px solid #4CAF50; /* Левая граница */
+  padding: 10px; /* Отступы */
+  overflow-x: auto; /* Прокрутка по оси X */
+  border-radius: 4px; /* Закругленные углы */
+  white-space: pre-wrap;
+  word-wrap: break-word;
+}
+
+code {
+  background-color: #e8e8e8; /* Цвет фона для кода */
+  padding: 2px 4px; /* Отступы внутри кода */
+  border-radius: 4px; /* Закругленные углы */
+  font-family: monospace; /* Моноширинный шрифт для кода */
+}
+
+.example {
+  background-color: #f9f9f9; /* Цвет фона для примеров */
+  border: 1px solid #ccc; /* Граница для примеров */
+  border-radius: 8px; /* Закругленные углы */
+  padding: 5px; /* Отступы внутри примеров */
+  margin: 5px 0; /* Отступы сверху и снизу */
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); /* Легкая тень */
+}
+
+.example strong {
+  color: #333; /* Цвет заголовка примера */
+}
+
+.example-block {
+  background-color: #f9f9f9; /* Цвет фона для блока примеров */
+  border: 1px solid #ccc; /* Граница для блока примеров */
+  border-radius: 8px; /* Закругленные углы */
+  padding: 15px; /* Отступы внутри блока */
+  margin: 20px 0; /* Отступы сверху и снизу */
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); /* Легкая тень */
+}
+
+.example-block p {
+  margin: 8px 0; /* Отступы для параграфов внутри блока */
+}
+
+.example-io {
+  background-color: #e8e8e8; /* Цвет фона для входных/выходных данных */
+  padding: 4px 6px; /* Отступы внутри данных */
+  border-radius: 4px; /* Закругленные углы */
+  font-family: monospace; /* Моноширинный шрифт для данных */
+}
+
+.example-block pre {
+  background-color: #f1f1f1; /* Цвет фона для кода */
+  border-left: 4px solid #4CAF50; /* Левая граница */
+  padding: 10px; /* Отступы */
+  overflow-x: auto; /* Прокрутка по оси X */
+  border-radius: 4px; /* Закругленные углы */
+}
