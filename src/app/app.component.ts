@@ -10,6 +10,7 @@ import {LeetcodeService} from './service/leetcode.service';
 import {ProblemService} from './service/problem/problem.service';
 import {Logger} from './service/logger/logger.service';
 import {tags} from './tags';
+import {ToastrService} from 'ngx-toastr';
 
 @Component({
   selector: 'app-root',
@@ -35,6 +36,7 @@ export class AppComponent implements AfterViewInit {
 
   constructor(protected tokenService: TokenService,
               private leetcodeService: LeetcodeService,
+              private toastr: ToastrService,
               private problemService: ProblemService) {
 
   }
@@ -42,15 +44,21 @@ export class AppComponent implements AfterViewInit {
   ngAfterViewInit() {
     Logger.log('AppComponent initialized');
 
-    if (this.tokenService.session !== undefined && this.tokenService.session !== null &&
-      this.tokenService.csrftoken !== undefined && this.tokenService.csrftoken !== null) {
+    if (this.checkToken()) {
       this.fetchRandomTask();
     } else {
-      // Handle the case where session or csrftoken is undefined or null
-      this.openTokenModal();
+      this.alertToken();
     }
+  }
 
+  checkToken() {
+    return this.tokenService.session !== undefined && this.tokenService.session !== null &&
+      this.tokenService.csrftoken !== undefined && this.tokenService.csrftoken !== null;
+  }
 
+  alertToken() {
+    this.toastr.error('Please enter your session and csrftoken', 'Error');
+    this.openTokenModal();
   }
 
   openFilterModal() {
@@ -95,10 +103,22 @@ export class AppComponent implements AfterViewInit {
     const tags = this.getSelectedTags();
     const difficulty = this.selectedDifficulty;
 
-    this.leetcodeService.fetchProblem(difficulty, tags, session, csrftoken).subscribe(response => {
-      this.problem = response.data.randomQuestion;
-      this.fetchProblemDescription(this.problem.titleSlug);
-      this.showSplit = true;
+    if(!this.checkToken()){
+      this.alertToken();
+      return;
+    }
+
+    this.leetcodeService.fetchProblem(difficulty, tags, session, csrftoken).subscribe({
+      next: response => {
+        this.problem = response.data.randomQuestion;
+        this.fetchProblemDescription(this.problem.titleSlug);
+        this.showSplit = true;
+      },
+      error: err => {
+        // Уведомление об ошибке
+        this.toastr.error(err, 'Error');
+        console.error('Error fetching problem:', err);
+      }
     });
   }
 
@@ -106,10 +126,22 @@ export class AppComponent implements AfterViewInit {
     const session = this.tokenService.session;
     const csrftoken = this.tokenService.csrftoken;
 
-    this.leetcodeService.fetchDailyProblem(session, csrftoken).subscribe(response => {
-      this.problem = response.data.activeDailyCodingChallengeQuestion.question;
-      this.fetchProblemDescription(this.problem.titleSlug);
-      this.showSplit = true;
+    if(!this.checkToken()){
+      this.alertToken();
+      return;
+    }
+
+    this.leetcodeService.fetchDailyProblem(session, csrftoken).subscribe({
+      next: response => {
+        this.problem = response.data.activeDailyCodingChallengeQuestion.question;
+        this.fetchProblemDescription(this.problem.titleSlug);
+        this.showSplit = true;
+      },
+      error: err => {
+        // Уведомление об ошибке
+        this.toastr.error(err, 'Error');
+        console.error('Error fetching problem:', err);
+      }
     });
   }
 
@@ -117,11 +149,23 @@ export class AppComponent implements AfterViewInit {
     const session = this.tokenService.session;
     const csrftoken = this.tokenService.csrftoken;
 
-    this.leetcodeService.fetchProblemDescription(titleSlug, session, csrftoken).subscribe(response => {
-      this.problem.description = response.data.question.content;
-      this.problem.hints = response.data.question.hints;
-      this.problem.similarQuestions = response.data.question.similarQuestions;
-      this.problemService.setProblem(this.problem);
+    if(!this.checkToken()){
+      this.alertToken();
+      return;
+    }
+
+    this.leetcodeService.fetchProblemDescription(titleSlug, session, csrftoken).subscribe({
+      next: response => {
+        this.problem.description = response.data.question.content;
+        this.problem.hints = response.data.question.hints;
+        this.problem.similarQuestions = response.data.question.similarQuestions;
+        this.problemService.setProblem(this.problem);
+      },
+      error: err => {
+        // Уведомление об ошибке
+        this.toastr.error(err, 'Error');
+        console.error('Error fetching problem:', err);
+      }
     });
   }
 }
