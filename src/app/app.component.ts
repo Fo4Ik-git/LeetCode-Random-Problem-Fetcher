@@ -8,7 +8,7 @@ import {SplitAreaComponent, SplitComponent} from 'angular-split';
 import {NgForOf, NgIf} from '@angular/common';
 import {LeetcodeService} from './service/leetcode.service';
 import {ProblemService} from './service/problem/problem.service';
-import { Logger } from './service/logger/logger.service';
+import {Logger} from './service/logger/logger.service';
 import {tags} from './tags';
 
 @Component({
@@ -36,11 +36,21 @@ export class AppComponent implements AfterViewInit {
   constructor(protected tokenService: TokenService,
               private leetcodeService: LeetcodeService,
               private problemService: ProblemService) {
+
   }
 
   ngAfterViewInit() {
     Logger.log('AppComponent initialized');
-    this.fetchRandomTask();
+
+    if (this.tokenService.session !== undefined && this.tokenService.session !== null &&
+      this.tokenService.csrftoken !== undefined && this.tokenService.csrftoken !== null) {
+      this.fetchRandomTask();
+    } else {
+      // Handle the case where session or csrftoken is undefined or null
+      this.openTokenModal();
+    }
+
+
   }
 
   openFilterModal() {

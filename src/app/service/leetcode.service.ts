@@ -8,9 +8,10 @@ import {Logger} from './logger/logger.service';
 })
 export class LeetcodeService {
 
-  private graphqlUrl = '/api/graphql/';
+  private graphqlUrl = '/api/graphql';
 
   constructor(private http: HttpClient) {
+
   }
 
   fetchProblem(difficulty: string, tags: string[], session: string, csrftoken: string): Observable<any> {
@@ -53,7 +54,9 @@ export class LeetcodeService {
       headers: new HttpHeaders({
         'Content-Type': 'application/json',
         'Cookie': `LEETCODE_SESSION=${session}; csrftoken=${csrftoken}`,
-        'x-csrftoken': csrftoken
+        'x-csrftoken': csrftoken,
+        'session': session,
+        'csrftoken': csrftoken,
       })
     });
   }
@@ -90,7 +93,9 @@ export class LeetcodeService {
       headers: new HttpHeaders({
         'Content-Type': 'application/json',
         'Cookie': `LEETCODE_SESSION=${session}; csrftoken=${csrftoken}`,
-        'x-csrftoken': csrftoken
+        'x-csrftoken': csrftoken,
+        'session': session,
+        'csrftoken': csrftoken,
       })
     });
   }
@@ -121,36 +126,9 @@ export class LeetcodeService {
       headers: new HttpHeaders({
         'Content-Type': 'application/json',
         'Cookie': `LEETCODE_SESSION=${session}; csrftoken=${csrftoken}`,
-        'x-csrftoken': csrftoken
-      })
-    });
-  }
-
-  fetchSimilarQuestions(titleSlug: string, session: string, csrftoken: string): Observable<any> {
-    const query = `query SimilarQuestions($titleSlug: String!) {
-                      question(titleSlug: $titleSlug) {
-                          similarQuestionList {
-                              difficulty
-                              titleSlug
-                              title
-                              translatedTitle
-                              isPaidOnly
-                          }
-                      }
-                  }`;
-
-    const variables = {
-      titleSlug: titleSlug
-    };
-
-    return this.http.post(this.graphqlUrl, {
-      query,
-      variables
-    }, {
-      headers: new HttpHeaders({
-        'Content-Type': 'application/json',
-        'Cookie': `LEETCODE_SESSION=${session}; csrftoken=${csrftoken}`,
-        'x-csrftoken': csrftoken
+        'x-csrftoken': csrftoken,
+        'session': session,
+        'csrftoken': csrftoken,
       })
     });
   }

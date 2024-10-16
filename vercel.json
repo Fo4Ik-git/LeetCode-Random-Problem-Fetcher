@@ -1,0 +1,16 @@
+{
+  "version": 2,
+  "builds": [
+    {
+      "src": "dist/lsw/browser/index.html",
+      "use": "@vercel/static"
+    }
+  ],
+  "routes": [
+    {
+      "src": "/api/(.*)",
+      "dest": "https://leetcode.com/api/$1",
+      "methods": ["GET", "POST"]
+    }
+  ]
+}
