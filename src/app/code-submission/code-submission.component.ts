@@ -100,5 +100,14 @@ export class CodeSubmissionComponent implements OnInit, AfterViewInit {
     }
   }
 
+  copyToClipboard() {
+    const code = this.editorView.state.doc.toString();
+    navigator.clipboard.writeText(code).then(() => {
+      Logger.log('Code copied to clipboard');
+    }).catch(err => {
+      Logger.log('Failed to copy code: ', err);
+    });
+  }
+
 //swift ruby racket erlang elixir
 }

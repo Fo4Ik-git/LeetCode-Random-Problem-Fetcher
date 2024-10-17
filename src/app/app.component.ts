@@ -42,6 +42,8 @@ export class AppComponent implements AfterViewInit {
 
 
   @ViewChild(ProblemComponent) problemComponent!: ProblemComponent;
+  @ViewChild('codeSubmissionComponent') codeSubmissionComponent!: CodeSubmissionComponent;
+
 
   constructor(protected tokenService: TokenService,
               private leetcodeService: LeetcodeService,
@@ -59,6 +61,13 @@ export class AppComponent implements AfterViewInit {
     } else {
       this.alertToken();
     }
+  }
+
+  copyToClipboard() {
+    this.codeSubmissionComponent.copyToClipboard();
+
+    const url = `https://leetcode.com/problems/${this.problem.titleSlug}`;
+    window.open(url, '_blank');
   }
 
   checkToken() {

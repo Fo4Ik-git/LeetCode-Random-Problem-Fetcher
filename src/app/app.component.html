@@ -19,13 +19,15 @@
       <app-problem></app-problem>
     </as-split-area>
     <as-split-area id="editor-area" size="30">
-      <div>
-        <label for="language-select">Select Language:</label>
-        <select id="language-select" [(ngModel)]="selectedLanguage" (change)="onLanguageChange(selectedLanguage)">
+      <div class="mb-4 flex items-center">
+        <select id="language-select" [(ngModel)]="selectedLanguage" (change)="onLanguageChange(selectedLanguage)"
+                class="block w-full bg-white border border-gray-300 text-gray-700 py-2 px-3 rounded leading-tight">
           <option *ngFor="let lang of languages" [value]="lang">{{ lang }}</option>
         </select>
+        <button class="ml-2 bg-primary text-black py-2 px-4 rounded whitespace-nowrap" (click)="copyToClipboard()">Copy & Go</button>
       </div>
       <app-code-submission
+        #codeSubmissionComponent
         *ngIf="showCodeSubmission"
         [initialCode]="initialCode"
         [language]="selectedLanguage"
