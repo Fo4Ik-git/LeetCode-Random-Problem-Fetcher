@@ -114,7 +114,7 @@ export class AppComponent implements AfterViewInit {
   }
 
   applyFilters() {
-    console.log('Selected Tags:', this.getSelectedTags());
+    Logger.log('Selected Tags:', this.getSelectedTags());
     this.showFilterModal = false;
   }
 
@@ -200,7 +200,6 @@ export class AppComponent implements AfterViewInit {
       },
       error: err => {
         this.toastr.error(err, 'Error');
-        console.error('Error fetching problem:', err);
       }
     });
   }
@@ -226,7 +225,6 @@ export class AppComponent implements AfterViewInit {
       },
       error: err => {
         this.toastr.error(err, 'Error');
-        console.error('Error fetching problem:', err);
       }
     });
   }
