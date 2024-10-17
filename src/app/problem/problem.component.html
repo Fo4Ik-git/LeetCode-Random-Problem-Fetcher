@@ -6,27 +6,27 @@
   </tr>
   <tr>
     <td style="padding: 10px; border: 1px solid #ccc;"><strong>Title</strong></td>
-    <td style="padding: 10px; border: 1px solid #ccc;">{{ problem.title }}</td>
+    <td style="padding: 10px; border: 1px solid #ccc;">{{ problem?.title }}</td>
   </tr>
   <tr>
     <td style="padding: 10px; border: 1px solid #ccc;"><strong>Difficulty</strong></td>
-    <td style="padding: 10px; border: 1px solid #ccc;" [ngStyle]="difficultyStyles[problem.difficulty]">
-      <strong>{{ problem.difficulty }}</strong></td>
+    <td style="padding: 10px; border: 1px solid #ccc;" [ngStyle]="difficultyStyles[problem?.difficulty]">
+      <strong>{{ problem?.difficulty }}</strong></td>
   </tr>
   <tr>
     <td style="padding: 10px; border: 1px solid #ccc;"><strong>Status</strong></td>
-    <td style="padding: 10px; border: 1px solid #ccc;" [ngStyle]="difficultyStyles[problem.difficulty]">
-      <strong>{{ problem.status !== null ? 'Solved' : 'Not Solved' }}</strong>
+    <td style="padding: 10px; border: 1px solid #ccc;" [ngStyle]="difficultyStyles[problem?.status]">
+      <strong>{{ problem?.status !== null ? 'Solved' : 'Not Solved' }}</strong>
     </td>
   </tr>
   <tr>
     <td style="padding: 10px; border: 1px solid #ccc;"><strong>Acceptance Rate</strong></td>
-    <td style="padding: 10px; border: 1px solid #ccc;">{{ problem.acRate }}%</td>
+    <td style="padding: 10px; border: 1px solid #ccc;">{{ problem?.acRate }}%</td>
   </tr>
   <tr>
     <td style="padding: 10px; border: 1px solid #ccc;"><strong>Topic Tags</strong></td>
     <td style="padding: 10px; border: 1px solid #ccc;">
-      <span *ngIf="problem?.topicTags && problem.topicTags.length > 0; else noTags">
+      <span *ngIf="problem?.topicTags && problem?.topicTags.length > 0; else noTags">
         <span *ngFor="let tag of problem.topicTags; let last = last">
           {{ tag.name }}<span *ngIf="!last">, </span>
         </span>
@@ -38,22 +38,22 @@
 <span style="display: inline-block;">
   <button (click)="openProblem(problem.titleSlug)"
           style="margin-top: 20px; padding: 10px 20px; background-color: #4CAF50; color: white; border: none; border-radius: 5px; cursor: pointer;">View Problem on LeetCode</button>
-  <button *ngIf="problem.hasSolution" id="official-solution" (click)="openSolution(problem.titleSlug)"
+  <button *ngIf="problem?.hasSolution" id="official-solution" (click)="openSolution(problem?.titleSlug)"
           style="margin-top: 20px; padding: 10px 20px; background-color: #008CBA; color: white; border: none; border-radius: 5px; cursor: pointer;">View Official Solution</button>
 </span>
 
 
-<span class="mt-2 overflow-auto max-h-full problem-description" [innerHTML]="problem.description"></span>
+<span class="mt-2 overflow-auto max-h-full problem-description" [innerHTML]="problem?.description"></span>
 <div class="problem-section">
-  <h3 *ngIf="problem.hints && problem.hints.length > 0">Hints</h3>
-  <ul *ngIf="problem.hints && problem.hints.length > 0" class="styled-list">
+  <h3 *ngIf="problem?.hints && problem.hints.length > 0">Hints</h3>
+  <ul *ngIf="problem?.hints && problem.hints.length > 0" class="styled-list">
     <li *ngFor="let hint of problem.hints" class="hint-item" [innerHtml]="hint"></li>
   </ul>
 </div>
 
 <div class="problem-section">
-  <h3 *ngIf="problem.similarQuestions && problem.similarQuestions.length > 0">Similar Questions</h3>
-  <ul *ngIf="problem.similarQuestions && problem.similarQuestions.length > 0" class="styled-list">
+  <h3 *ngIf="problem?.similarQuestions && problem?.similarQuestions.length > 0">Similar Questions</h3>
+  <ul *ngIf="problem?.similarQuestions && problem?.similarQuestions.length > 0" class="styled-list">
     <li *ngFor="let q of problem.similarQuestions" class="similar-question-item">
       <strong><a [href]="'https://leetcode.com/problems/' + q.titleSlug" target="_blank">{{ q.title }}</a></strong>
       (<span [ngStyle]="difficultyStyles[q.difficulty]">{{ q.difficulty }}</span>)
