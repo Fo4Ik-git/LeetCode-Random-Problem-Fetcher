@@ -6,13 +6,14 @@ import {python} from '@codemirror/lang-python';
 import {javascript} from '@codemirror/lang-javascript';
 import {csharp} from '@replit/codemirror-lang-csharp';
 import {cpp} from '@codemirror/lang-cpp';
-import {EditorView} from '@codemirror/view';
+import {EditorView, keymap} from '@codemirror/view';
 import {EditorState} from '@codemirror/state';
 import {basicSetup} from 'codemirror';
 import {php} from '@codemirror/lang-php';
 import {go} from '@codemirror/lang-go';
 import {rust} from '@codemirror/lang-rust';
 import {autocompletion} from '@codemirror/autocomplete';
+import {indentWithTab} from '@codemirror/commands';
 
 @Component({
   selector: 'app-code-submission',
@@ -46,7 +47,9 @@ export class CodeSubmissionComponent implements OnInit, AfterViewInit {
       Logger.log("language: " + this.language);
 
       const extensions = [basicSetup,
-        this.getLanguageExtension(this.language), autocompletion()];
+        this.getLanguageExtension(this.language),
+        keymap.of([indentWithTab]),
+        autocompletion()];
 
       const startState = EditorState.create({
         doc: this.initialCode,
@@ -57,6 +60,8 @@ export class CodeSubmissionComponent implements OnInit, AfterViewInit {
         state: startState,
         parent: this.editorElement.nativeElement
       });
+
+
     } catch (e) {
       Logger.log(e);
     }
