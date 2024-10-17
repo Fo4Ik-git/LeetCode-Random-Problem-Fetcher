@@ -142,14 +142,20 @@ export class AppComponent implements AfterViewInit {
     this.leetcodeService.fetchProblem(difficulty, tags, session, csrftoken).subscribe({
       next: response => {
 
-        if (response.data.randomQuestion == null) {
+        const randomQuestion = response.data?.randomQuestion;
+        if (!randomQuestion) {
           this.toastr.error('No random problem found', 'Error');
           return;
         }
 
-        this.problem = response.data.randomQuestion;
+        this.problem = randomQuestion;
+
 
         const codeSnippets = this.problem.codeSnippets;
+        if (!codeSnippets) {
+          this.toastr.error('No code snippets found', 'Error');
+          return;
+        }
 
         this.languages = codeSnippets.map((snippet: { lang: string }) => snippet.lang);
         this.codeSnippets = {};
@@ -161,6 +167,7 @@ export class AppComponent implements AfterViewInit {
         this.initialCode = this.codeSnippets[this.selectedLanguage];
 
         this.fetchProblemDescription(this.problem.titleSlug);
+        this.onLanguageChange(this.selectedLanguage);
         this.showSplit = true;
       },
       error: err => {
