@@ -38,7 +38,7 @@ export class AppComponent implements AfterViewInit {
   languages: string[] = [];
   codeSnippets: any = {};
   showCodeSubmission: boolean = true;
-  codeEditorTheme: string = 'vs-light';
+  codeEditorTheme: string = 'dracula';
 
 
   @ViewChild(ProblemComponent) problemComponent!: ProblemComponent;
@@ -124,7 +124,7 @@ export class AppComponent implements AfterViewInit {
     this.showCodeSubmission = false;
     setTimeout(() => {
       this.showCodeSubmission = true;
-    }, 0);
+    }, 15);
   }
 
   // Fetch random task
