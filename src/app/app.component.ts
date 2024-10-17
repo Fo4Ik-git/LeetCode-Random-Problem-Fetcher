@@ -127,6 +127,25 @@ export class AppComponent implements AfterViewInit {
     }, 15);
   }
 
+  getCodeSnippet(codeSnippets: any) {
+
+    if (!codeSnippets) {
+      this.toastr.error('No code snippets found', 'Error');
+      return;
+    }
+
+    this.languages = codeSnippets.map((snippet: { lang: string }) => snippet.lang);
+    this.codeSnippets = {};
+    codeSnippets.forEach((snippet: { lang: string; code: string }) => {
+      this.codeSnippets[snippet.lang] = snippet.code;
+    });
+
+    this.selectedLanguage = this.languages[0];
+    this.initialCode = this.codeSnippets[this.selectedLanguage];
+
+    this.onLanguageChange(this.selectedLanguage);
+  }
+
   // Fetch random task
   fetchRandomTask() {
     const session = this.tokenService.session;
@@ -150,29 +169,12 @@ export class AppComponent implements AfterViewInit {
 
         this.problem = randomQuestion;
 
-
-        const codeSnippets = this.problem.codeSnippets;
-        if (!codeSnippets) {
-          this.toastr.error('No code snippets found', 'Error');
-          return;
-        }
-
-        this.languages = codeSnippets.map((snippet: { lang: string }) => snippet.lang);
-        this.codeSnippets = {};
-        codeSnippets.forEach((snippet: { lang: string; code: string }) => {
-          this.codeSnippets[snippet.lang] = snippet.code;
-        });
-
-        this.selectedLanguage = this.languages[0];
-        this.initialCode = this.codeSnippets[this.selectedLanguage];
-
         this.fetchProblemDescription(this.problem.titleSlug);
-        this.onLanguageChange(this.selectedLanguage);
+        this.getCodeSnippet(this.problem.codeSnippets);
         this.showSplit = true;
       },
       error: err => {
         this.toastr.error(err, 'Error');
-        console.error('Error fetching problem:', err);
       }
     });
   }
@@ -192,8 +194,8 @@ export class AppComponent implements AfterViewInit {
         this.problem = response.data.activeDailyCodingChallengeQuestion.question;
 
 
-
         this.fetchProblemDescription(this.problem.titleSlug);
+        this.getCodeSnippet(this.problem.codeSnippets);
         this.showSplit = true;
       },
       error: err => {
