@@ -13,7 +13,7 @@ import {php} from '@codemirror/lang-php';
 import {go} from '@codemirror/lang-go';
 import {rust} from '@codemirror/lang-rust';
 import {autocompletion} from '@codemirror/autocomplete';
-import {indentWithTab} from '@codemirror/commands';
+import {indentWithTab, toggleComment} from '@codemirror/commands';
 
 @Component({
   selector: 'app-code-submission',
@@ -48,7 +48,14 @@ export class CodeSubmissionComponent implements OnInit, AfterViewInit {
 
       const extensions = [basicSetup,
         this.getLanguageExtension(this.language),
-        keymap.of([indentWithTab]),
+        keymap.of([
+          indentWithTab,
+          {key: "Ctrl-y", run: this.deleteLineCommand},
+          {key: "Cmd-y", run: this.deleteLineCommand},
+          // {key: "Ctrl-d", run: this.copyCurrentLineDown},
+          // {key: "Cmd-d", run: this.copyCurrentLineDown},
+
+        ]),
         autocompletion()];
 
       const startState = EditorState.create({
@@ -108,6 +115,26 @@ export class CodeSubmissionComponent implements OnInit, AfterViewInit {
       Logger.log('Failed to copy code: ', err);
     });
   }
+
+  deleteLineCommand = (view: EditorView): boolean => {
+    const {state} = view;
+    const line = state.doc.lineAt(state.selection.main.head);
+
+    if (line.from === line.to) {
+      const transaction = state.update({
+        changes: {from: line.from, to: line.to + 1}
+      });
+      view.dispatch(transaction);
+    } else {
+      const transaction = state.update({
+        changes: {from: line.from, to: line.to + 1}
+      });
+      view.dispatch(transaction);
+    }
+
+    return true;
+  };
+
 
 //swift ruby racket erlang elixir
 }
