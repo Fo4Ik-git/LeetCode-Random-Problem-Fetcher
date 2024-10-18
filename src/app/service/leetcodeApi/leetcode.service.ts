@@ -1,7 +1,7 @@
 import {Injectable} from '@angular/core';
 import {HttpClient, HttpHeaders} from '@angular/common/http';
 import {Observable} from 'rxjs';
-import {Logger} from './logger/logger.service';
+import {Logger} from '../logger/logger.service';
 
 @Injectable({
   providedIn: 'root'
@@ -31,6 +31,7 @@ export class LeetcodeService {
           lang
           code
         }
+        isPaidOnly
       }
     }`;
 
@@ -129,75 +130,6 @@ export class LeetcodeService {
         'x-csrftoken': csrftoken,
         'session': session,
         'csrftoken': csrftoken,
-      })
-    });
-  }
-
-
-  runCode(questionSlug: string, code: string, languageId: string, testCases: string[], session: string, csrftoken: string): Observable<any> {
-    const query = `mutation runCode($questionSlug: String!, $typedCode: String!, $languageId: String!, $testCases: [String!]!) {
-      runCode(
-        questionSlug: $questionSlug,
-        typedCode: $typedCode,
-        languageId: $languageId,
-        testCases: $testCases
-      ) {
-        status
-        submissionId
-        runSuccess
-        memory
-        time
-        correct_answer
-        total_testcases
-        expected_output
-        code_output
-      }
-    }`;
-
-    const variables = {
-      questionSlug: questionSlug,
-      typedCode: code,
-      languageId: languageId,
-      testCases: testCases
-    };
-
-    return this.http.post(this.graphqlUrl, {
-      query,
-      variables
-    }, {
-      headers: new HttpHeaders({
-        'Content-Type': 'application/json',
-        'Cookie': `LEETCODE_SESSION=${session}; csrftoken=${csrftoken}`,
-        'x-csrftoken': csrftoken
-      })
-    });
-  }
-
-  fetchSubmissionResult(submissionId: string, session: string, csrftoken: string): Observable<any> {
-    const query = `query submissionResult($submissionId: String!) {
-      submissionResult(submissionId: $submissionId) {
-        status
-        memory
-        time
-        correct_answer
-        total_testcases
-        code_output
-        expected_output
-      }
-    }`;
-
-    const variables = {
-      submissionId: submissionId
-    };
-
-    return this.http.post(this.graphqlUrl, {
-      query,
-      variables
-    }, {
-      headers: new HttpHeaders({
-        'Content-Type': 'application/json',
-        'Cookie': `LEETCODE_SESSION=${session}; csrftoken=${csrftoken}`,
-        'x-csrftoken': csrftoken
       })
     });
   }

@@ -16,11 +16,12 @@ import {NgClass, NgForOf, NgIf} from '@angular/common';
   styleUrl: './filter.component.css'
 })
 export class FilterComponent {
-  @Output() applyFiltersEvent = new EventEmitter<{ difficulty: string, tags: string[] }>();
+  @Output() applyFiltersEvent = new EventEmitter<{ difficulty: string, tags: string[]}>();
   @Output() closeFilterModalEvent = new EventEmitter<void>();
   @Input() showFilterModal = false;
   searchQuery: string = '';
   selectedDifficulty: string = '';
+  selectedPaid: string = '';
   selectedTags: string[] = [];
   availableTags = tags;
   filteredTags = [...this.availableTags];
@@ -56,7 +57,11 @@ export class FilterComponent {
   }
 
   applyFilters() {
-    this.applyFiltersEvent.emit({difficulty: this.selectedDifficulty, tags: this.getSelectedTags()});
+
+    this.applyFiltersEvent.emit({
+      difficulty: this.selectedDifficulty,
+      tags: this.getSelectedTags(),
+    });
     this.showFilterModal = false;
     this.closeFilterModalEvent.emit();
   }

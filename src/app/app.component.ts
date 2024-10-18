@@ -2,17 +2,15 @@ import {AfterViewInit, Component, ViewChild} from '@angular/core';
 import {RouterOutlet} from '@angular/router';
 import {ProblemComponent} from './problem/problem.component';
 import {CodeSubmissionComponent} from './code-submission/code-submission.component';
-import {TokenService} from './service/token.service';
+import {TokenService} from './service/token/token.service';
 import {FormsModule} from '@angular/forms';
 import {SplitAreaComponent, SplitComponent} from 'angular-split';
 import {NgClass, NgForOf, NgIf} from '@angular/common';
-import {LeetcodeService} from './service/leetcode.service';
 import {ProblemService} from './service/problem/problem.service';
 import {Logger} from './service/logger/logger.service';
-import {tags} from './tags';
 import {ToastrService} from 'ngx-toastr';
-import {HttpClient} from '@angular/common/http';
 import {FilterComponent} from './filter/filter.component';
+import {ProblemFetcherService} from './service/problemFetcher/problem-fetcher.service';
 
 @Component({
   selector: 'app-root',
@@ -44,7 +42,7 @@ export class AppComponent implements AfterViewInit {
 
 
   constructor(protected tokenService: TokenService,
-              private leetcodeService: LeetcodeService,
+              private problemFetchService: ProblemFetcherService,
               private toastr: ToastrService,
               private problemService: ProblemService) {
 
@@ -68,8 +66,7 @@ export class AppComponent implements AfterViewInit {
   }
 
   checkToken() {
-    return this.tokenService.session !== undefined && this.tokenService.session !== null &&
-      this.tokenService.csrftoken !== undefined && this.tokenService.csrftoken !== null;
+    return this.problemFetchService.checkToken();
   }
 
   alertToken() {
@@ -108,104 +105,44 @@ export class AppComponent implements AfterViewInit {
   }
 
   getCodeSnippet(codeSnippets: any) {
-
-    if (!codeSnippets) {
-      this.toastr.error('No code snippets found', 'Error');
-      return;
-    }
-
-    this.languages = codeSnippets.map((snippet: { lang: string }) => snippet.lang);
-    this.codeSnippets = {};
-    codeSnippets.forEach((snippet: { lang: string; code: string }) => {
-      this.codeSnippets[snippet.lang] = snippet.code;
+    this.problemFetchService.getCodeSnippet(codeSnippets, (languages, snippets) => {
+      this.languages = languages;
+      this.codeSnippets = snippets;
+      this.selectedLanguage = this.languages[0];
+      this.initialCode = this.codeSnippets[this.selectedLanguage];
+      this.onLanguageChange(this.selectedLanguage);
     });
-
-    this.selectedLanguage = this.languages[0];
-    this.initialCode = this.codeSnippets[this.selectedLanguage];
-
-    this.onLanguageChange(this.selectedLanguage);
   }
 
-  // Fetch random task
+
   fetchRandomTask() {
-    const session = this.tokenService.session;
-    const csrftoken = this.tokenService.csrftoken;
-    const tags = this.selectedTags;
-    const difficulty = this.selectedDifficulty;
-
-    if (!this.checkToken()) {
-      this.alertToken();
-      return;
-    }
-
-    this.leetcodeService.fetchProblem(difficulty, tags, session, csrftoken).subscribe({
-      next: response => {
-
-        const randomQuestion = response.data?.randomQuestion;
-        if (!randomQuestion) {
-          this.toastr.error('No random problem found', 'Error');
-          return;
-        }
-
-        this.problem = randomQuestion;
-
-        this.fetchProblemDescription(this.problem.titleSlug);
-        this.getCodeSnippet(this.problem.codeSnippets);
-        this.showSplit = true;
-      },
-      error: err => {
-        this.toastr.error(err, 'Error');
-      }
+    this.problemFetchService.fetchRandomTask(this.selectedTags, this.selectedDifficulty, (problem) => {
+      this.problem = problem;
+      this.fetchProblemDescription(this.problem.titleSlug);
+      this.getCodeSnippet(this.problem.codeSnippets);
+      this.showSplit = true;
     });
   }
 
-  // Fetch daily task
+
   fetchDailyTask() {
-    const session = this.tokenService.session;
-    const csrftoken = this.tokenService.csrftoken;
-
-    if (!this.checkToken()) {
-      this.alertToken();
-      return;
-    }
-
-    this.leetcodeService.fetchDailyProblem(session, csrftoken).subscribe({
-      next: response => {
-        this.problem = response.data.activeDailyCodingChallengeQuestion.question;
-
-
-        this.fetchProblemDescription(this.problem.titleSlug);
-        this.getCodeSnippet(this.problem.codeSnippets);
-        this.showSplit = true;
-      },
-      error: err => {
-        this.toastr.error(err, 'Error');
-      }
+    this.problemFetchService.fetchDailyTask((problem) => {
+      this.problem = problem;
+      this.fetchProblemDescription(this.problem.titleSlug);
+      this.getCodeSnippet(this.problem.codeSnippets);
+      this.showSplit = true;
     });
   }
 
-  // Fetch problem description and hints
+
   fetchProblemDescription(titleSlug: string) {
-    const session = this.tokenService.session;
-    const csrftoken = this.tokenService.csrftoken;
-
-    if (!this.checkToken()) {
-      this.alertToken();
-      return;
-    }
-
-    this.leetcodeService.fetchProblemDescription(titleSlug, session, csrftoken).subscribe({
-      next: response => {
-        this.problem.description = response.data.question.content;
-        this.problem.hints = response.data.question.hints;
-        this.problem.similarQuestions = response.data.question.similarQuestionList;
-        this.problemService.setProblem(this.problem);
-        Logger.log('response.data.question:', response.data.question);
-        Logger.log('Problem:', this.problem);
-      },
-      error: err => {
-        this.toastr.error(err, 'Error');
-      }
+    this.problemFetchService.fetchProblemDescription(titleSlug, (question) => {
+      this.problem.description = question.content;
+      this.problem.hints = question.hints;
+      this.problem.similarQuestions = question.similarQuestionList;
+      this.problemService.setProblem(this.problem);
+      Logger.log('response.data.question:', question);
+      Logger.log('Problem:', this.problem);
     });
   }
 
