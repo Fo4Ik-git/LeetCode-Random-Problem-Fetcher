@@ -1,0 +1,16 @@
+.button {
+  margin-top: 20px;
+  padding: 10px 20px;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.button-primary {
+  background-color: hsl(var(--twc-border));
+}
+
+.button-secondary {
+  background-color: #008CBA;
+}

@@ -36,11 +36,8 @@
   </tr>
 </table>
 <span style="display: inline-block;">
-  <button (click)="openProblem(problem.titleSlug)"
-          style="margin-top: 20px; padding: 10px 20px; background-color: #4CAF50; color: white; border: none; border-radius: 5px; cursor: pointer;">View Problem on LeetCode</button>
-  <button *ngIf="problem?.hasSolution" id="official-solution" (click)="openSolution(problem?.titleSlug)"
-          style="margin-top: 20px; padding: 10px 20px; background-color: #008CBA; color: white; border: none; border-radius: 5px; cursor: pointer;">View Official Solution</button>
-</span>
+  <button (click)="openProblem(problem.titleSlug)" class="button button-primary">View Problem on LeetCode</button>
+<button *ngIf="problem?.hasSolution" id="official-solution" (click)="openSolution(problem?.titleSlug)" class="button button-secondary ml-0.5">View Official Solution</button></span>
 
 
 <span class="mt-2 overflow-auto max-h-full problem-description" [innerHTML]="problem?.description"></span>

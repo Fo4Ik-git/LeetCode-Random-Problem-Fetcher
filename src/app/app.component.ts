@@ -12,11 +12,12 @@ import {Logger} from './service/logger/logger.service';
 import {tags} from './tags';
 import {ToastrService} from 'ngx-toastr';
 import {HttpClient} from '@angular/common/http';
+import {FilterComponent} from './filter/filter.component';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [RouterOutlet, ProblemComponent, CodeSubmissionComponent, FormsModule, SplitComponent, SplitAreaComponent, NgIf, NgForOf, NgClass],
+  imports: [RouterOutlet, ProblemComponent, CodeSubmissionComponent, FormsModule, SplitComponent, SplitAreaComponent, NgIf, NgForOf, NgClass, FilterComponent],
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss'
 })
@@ -24,14 +25,11 @@ export class AppComponent implements AfterViewInit {
   title = `LCW`;
   showSplit = false;
   showTokenModal = false;
-  searchQuery: string = '';
   showFilterModal = false;
   selectedDifficulty: string = '';
   selectedTags: string[] = [];
-  availableTags = tags;
 
   problem: any;
-  filteredTags = [...this.availableTags];
 
   initialCode!: string;
   selectedLanguage!: string;
@@ -48,7 +46,6 @@ export class AppComponent implements AfterViewInit {
   constructor(protected tokenService: TokenService,
               private leetcodeService: LeetcodeService,
               private toastr: ToastrService,
-              private http: HttpClient,
               private problemService: ProblemService) {
 
   }
@@ -80,14 +77,6 @@ export class AppComponent implements AfterViewInit {
     this.openTokenModal();
   }
 
-  openFilterModal() {
-    this.showFilterModal = true;
-  }
-
-  closeFilterModal() {
-    this.showFilterModal = false;
-  }
-
   openTokenModal() {
     this.showTokenModal = true;
   }
@@ -101,29 +90,11 @@ export class AppComponent implements AfterViewInit {
     this.closeTokenModal();
   }
 
-  filterTags() {
-    const query = this.searchQuery.toLowerCase();
-    this.filteredTags = this.availableTags.filter(tag =>
-      tag.label.toLowerCase().includes(query)
-    );
+  openFilterModal() {
+    this.showFilterModal = true;
   }
 
-  toggleTag(tag: { value: string; label: string; selected: boolean }) {
-    tag.selected = !tag.selected;
-    const index = this.selectedTags.indexOf(tag.value);
-    if (index > -1) {
-      this.selectedTags.splice(index, 1);
-    } else {
-      this.selectedTags.push(tag.value);
-    }
-  }
-
-  getSelectedTags(): string[] {
-    return this.selectedTags;
-  }
-
-  applyFilters() {
-    Logger.log('Selected Tags:', this.getSelectedTags());
+  closeFilterModal() {
     this.showFilterModal = false;
   }
 
@@ -159,7 +130,7 @@ export class AppComponent implements AfterViewInit {
   fetchRandomTask() {
     const session = this.tokenService.session;
     const csrftoken = this.tokenService.csrftoken;
-    const tags = this.getSelectedTags();
+    const tags = this.selectedTags;
     const difficulty = this.selectedDifficulty;
 
     if (!this.checkToken()) {
@@ -236,5 +207,11 @@ export class AppComponent implements AfterViewInit {
         this.toastr.error(err, 'Error');
       }
     });
+  }
+
+  onApplyFilters(event: { difficulty: string, tags: string[] }) {
+    this.selectedDifficulty = event.difficulty;
+    this.selectedTags = event.tags;
+    this.fetchRandomTask();
   }
 }

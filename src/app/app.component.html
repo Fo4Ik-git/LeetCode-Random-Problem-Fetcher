@@ -1,6 +1,9 @@
 <main class="container-fluid h-screen w-screen p-5">
   <div class="head">
-    <h1 class="flex flex-col items-center justify-center">LeetCode Random Problem Fetcher</h1>
+    <h1 class="flex flex-col items-center justify-center">LeetCode Random Problem Fetcher
+      <small class="text-sm">created by <a href="https://github.com/Fo4Ik-git"
+                                           class="font-bold hover:scale-110 transition-transform">Fo4Ik</a></small>
+    </h1>
 
     <div class="container-fluid flex flex-col items-center justify-center mt-2">
       <div class="row mb-4 flex justify-center">
@@ -24,7 +27,9 @@
                 class="block w-full bg-white border border-gray-300 text-gray-700 py-2 px-3 rounded leading-tight">
           <option *ngFor="let lang of languages" [value]="lang">{{ lang }}</option>
         </select>
-        <button class="ml-2 bg-primary text-black py-2 px-4 rounded whitespace-nowrap" (click)="copyToClipboard()">Copy & Go</button>
+        <button class="ml-2 bg-primary text-black py-2 px-4 rounded whitespace-nowrap" (click)="copyToClipboard()">Copy
+          & Go
+        </button>
       </div>
       <app-code-submission
         #codeSubmissionComponent
@@ -37,55 +42,11 @@
   </as-split>
 
 
-  <!-- Filter Modal -->
-  <div *ngIf="showFilterModal" class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
-    <div class="bg-white p-6 rounded-lg w-1/2">
-      <h2 class="text-xl font-bold mb-4">Filter Problems</h2>
-
-      <!-- Difficulty Filter -->
-      <h3 class="font-semibold mb-2">Difficulty</h3>
-      <div class="mb-4">
-        <label class="mr-2">
-          <input type="radio" name="difficulty" [value]="null" [(ngModel)]="selectedDifficulty"> Any
-        </label>
-        <label class="mr-2">
-          <input type="radio" name="difficulty" value="EASY" [(ngModel)]="selectedDifficulty"> Easy
-        </label>
-        <label class="mr-2">
-          <input type="radio" name="difficulty" value="MEDIUM" [(ngModel)]="selectedDifficulty"> Medium
-        </label>
-        <label>
-          <input type="radio" name="difficulty" value="HARD" [(ngModel)]="selectedDifficulty"> Hard
-        </label>
-      </div>
-
-      <!-- Search Input for Tags -->
-      <div class="mb-4">
-        <input type="text" [(ngModel)]="searchQuery" (input)="filterTags()" placeholder="Search tags..."
-               class="border p-2 rounded w-full">
-      </div>
-
-      <!-- Tags Filter -->
-      <h3 class="font-semibold mb-2">Tags</h3>
-      <div class="mb-4 h-72 overflow-y-auto border border-gray-300 p-2">
-        <div class="grid grid-cols-3 gap-2">
-          <button *ngFor="let tag of filteredTags"
-                  (click)="toggleTag(tag)"
-                  [ngClass]="tag.selected ? 'bg-blue-500 text-white' : 'bg-gray-200 text-gray-700'"
-                  class="p-2 rounded-lg transition duration-200 ease-in-out">
-            {{ tag.label }}
-          </button>
-        </div>
-      </div>
-
-      <!-- Modal Buttons -->
-      <div class="flex justify-end">
-        <button class="btn mr-2" (click)="showFilterModal = false">Cancel</button>
-        <button class="btn bg-blue-500 text-white" (click)="applyFilters()">Apply Filters</button>
-      </div>
-    </div>
-  </div>
-
+  <app-filter
+    (applyFiltersEvent)="onApplyFilters($event)"
+    (closeFilterModalEvent)="closeFilterModal()"
+    [showFilterModal]="showFilterModal"
+  ></app-filter>
 
   <!-- Modal for Setting Tokens -->
   <div class="fixed inset-0 z-50 flex items-center justify-center" *ngIf="showTokenModal">
